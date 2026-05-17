@@ -1,0 +1,17 @@
+[build]
+  publish = "."
+
+[[redirects]]
+  from = "/william"
+  to = "/william.html"
+  status = 200
+
+[[redirects]]
+  from = "/kc"
+  to = "/kc.html"
+  status = 200
+
+[[redirects]]
+  from = "/caven"
+  to = "/caven.html"
+  status = 200

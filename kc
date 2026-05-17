@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>KC 每周 20 EMA 脚本库</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body data-kol="kc">
+  <main class="shell">
+    <header class="library-header kc">
+      <nav class="crumb"><a href='/'>总目录</a><span>/</span><strong>KC</strong></nav>
+      <div class="header-grid">
+        <div>
+          <p class="eyebrow">KC · 5PLRK · 20 EMA Blueprint</p>
+          <h1>KC 每周 20 EMA 视频脚本库</h1>
+          <p class="lead">定位：20 EMA 入场教学 + 英语短视频信号说明。每周固定产出 3 篇讲解脚本，周一、周三、周五围绕 20 EMA 搭配 1 个确认指标；价格、RSI、MACD、ATR 会在打开页面和点击刷新时重新读取，并同步写入口播稿。</p>
+        </div>
+        <aside class="profile-box">
+          <span>群特征</span>
+          <strong>Entry / Target / SL 需求明确</strong>
+          <p>适合输出清楚的图表标注：trend、pullback、entry zone、stop loss、target。</p>
+        </aside>
+      </div>
+    </header>
+
+    <section id="directory" class="panel">
+      <div class="section-title">
+        <div>
+          <p class="eyebrow">Mon / Wed / Fri</p>
+          <h2>本周三篇脚本</h2>
+        </div>
+        <button class="ghost-btn" data-refresh>刷新行情</button>
+      </div>
+      <div class="usage-note">录制前先点“刷新行情”。刷新后，价格、RSI、MACD、ATR 会重新读取，并同步更新脚本详情和英文口播稿。</div>
+      <div id="market-strip" class="market-strip"></div>
+      <div id="script-list" class="script-list"></div>
+    </section>
+
+    <section id="detail" class="panel detail-panel" hidden>
+      <div class="detail-actions">
+        <button class="ghost-btn" data-back>返回目录</button>
+        <button class="ghost-btn" data-refresh>刷新行情</button>
+      </div>
+      <article id="script-detail"></article>
+    </section>
+  </main>
+  <script src="./scripts.js"></script>
+</body>
+</html>
