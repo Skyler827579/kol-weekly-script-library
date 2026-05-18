@@ -350,8 +350,7 @@ function bindEvents() {
 }
 
 function getCurrentScript(lib) {
-  const published = getWeeklyScripts(lib);
-  return published.at(-1) || getArchivedScripts(lib)[0] || lib.scripts[0];
+  return getMarketUpdates(lib)[0] || getBaseScripts(lib)[0] || lib.scripts[0];
 }
 
 function startOfShanghaiDay(date) {
@@ -484,22 +483,20 @@ function calcAtr(highs, lows, closes, period) {
 }
 
 function renderDirectory() {
-  const currentScripts = getWeeklyScripts(state.lib);
-  const pendingScripts = getPendingScripts(state.lib);
+  const baseScripts = getBaseScripts(state.lib);
+  const marketUpdates = getMarketUpdates(state.lib);
   const archivedScripts = getArchivedScripts(state.lib);
   document.querySelector("#script-list").innerHTML = `
     <div class="script-group-title">
-      <span>本周已生成</span>
-      <p>周一、周三、周五到当天才新增对应稿件。刷新行情只更新价格、涨跌幅和指标，不会覆盖脚本主题。</p>
+      <span>本周三篇基础稿件</span>
+      <p>这三篇是本周固定教学框架，适合提前排期录制；刷新行情只更新价格、涨跌幅和指标，不会覆盖脚本主题。</p>
     </div>
-    ${currentScripts.length ? currentScripts.map(script => renderScriptCard(script, getScheduleLabel(script))).join("") : `<div class="empty-note">本周还没有到脚本发布时间。</div>`}
-    ${pendingScripts.length ? `
-      <div class="script-group-title pending-title">
-        <span>待生成</span>
-        <p>这些稿件会在对应日期由自动化生成后进入“本周已生成”。</p>
-      </div>
-      ${pendingScripts.map(script => renderPendingCard(script, getScheduleLabel(script))).join("")}
-    ` : ""}
+    ${baseScripts.map(script => renderScriptCard(script, getScheduleLabel(script))).join("")}
+    <div class="script-group-title market-title">
+      <span>周一 / 周三 / 周五近期行情解读</span>
+      <p>这三篇会按 KOL 风格解读近两天或近一周行情；录制前点“刷新行情”，价格、涨跌幅、趋势和口播行情段会同步更新。</p>
+    </div>
+    ${marketUpdates.map(script => renderScriptCard(script, getScheduleLabel(script))).join("")}
     ${archivedScripts.length ? `
       <div class="script-group-title archive-title">
         <span>历史归档</span>
@@ -516,7 +513,7 @@ function renderDirectory() {
 
 function renderScriptCard(script, label) {
   return `
-    <article class="script-card ${script.week === state.script.week ? "current" : ""}" data-open="${script.week}">
+    <article class="script-card ${getScriptId(script) === getScriptId(state.script) ? "current" : ""}" data-open="${getScriptId(script)}">
       <div class="script-meta">
         <span>${label}</span>
         <span>${script.date}</span>
@@ -525,20 +522,6 @@ function renderScriptCard(script, label) {
       </div>
       <h3>${script.title}</h3>
       <p>${script.summary}</p>
-    </article>
-  `;
-}
-
-function renderPendingCard(script, label) {
-  return `
-    <article class="script-card pending-card" aria-disabled="true">
-      <div class="script-meta">
-        <span>${label}</span>
-        <span>${script.date}</span>
-        <span>待自动化生成</span>
-      </div>
-      <h3>${script.title}</h3>
-      <p>这篇会在 ${script.date} 自动生成后开放，不会提前作为已产出稿件显示。</p>
     </article>
   `;
 }
@@ -564,7 +547,7 @@ function renderMarket(loading) {
 }
 
 function openScript(week) {
-  const script = state.lib.scripts.find(s => String(s.week) === String(week)) || state.script;
+  const script = getAllScripts(state.lib).find(s => getScriptId(s) === String(week)) || state.script;
   state.script = script;
   document.querySelector("#directory").hidden = true;
   document.querySelector("#detail").hidden = false;
@@ -581,7 +564,7 @@ function renderDetail(script) {
   const bias = getBias(m);
   document.querySelector("#script-detail").innerHTML = `
     <section class="script-hero">
-      <p class="eyebrow">Page 2 · ${getWeeklyScripts(state.lib).includes(script) ? "本周已生成脚本" : "历史归档脚本"}</p>
+      <p class="eyebrow">Page 2 · ${getScriptTypeLabel(state.lib, script)}</p>
       <h2>${script.title}</h2>
       <p>${script.summary}</p>
       <div class="mini-row">
@@ -634,26 +617,93 @@ function renderDetail(script) {
   `;
 }
 
-function getWeeklyScripts(lib) {
-  return lib.scripts.slice(0, 3).filter(isPublished);
+function getBaseScripts(lib) {
+  return lib.scripts.slice(0, 3);
 }
 
 function getArchivedScripts(lib) {
-  return lib.scripts.slice(3).filter(isPublished);
+  return lib.scripts.slice(3);
 }
 
-function getPendingScripts(lib) {
-  return lib.scripts.slice(0, 3).filter(script => !isPublished(script));
+function getAllScripts(lib) {
+  return [...getBaseScripts(lib), ...getMarketUpdates(lib), ...getArchivedScripts(lib)];
 }
 
-function isPublished(script) {
-  if (!script.publishDate) return true;
-  return startOfShanghaiDay(new Date()) >= new Date(`${script.publishDate}T00:00:00+08:00`);
+function getScriptId(script) {
+  return String(script.id || script.week);
+}
+
+function getScriptTypeLabel(lib, script) {
+  if (script.kind === "market") return "近期行情解读稿件";
+  if (getBaseScripts(lib).includes(script)) return "本周基础稿件";
+  return "历史归档脚本";
 }
 
 function getScheduleLabel(script) {
+  if (script.label) return script.label;
   const map = { 0: "周一", 1: "周三", 2: "周五" };
   return map[script.week] || "历史稿件";
+}
+
+function getMarketUpdates(lib) {
+  const configs = {
+    William: {
+      tag: "ICT 行情解读",
+      assets: "BTC + ETH",
+      indicators: "Market Structure / RSI / MACD",
+      focus: "用 ICT/SMC 的结构、流动性和确认逻辑解读近两天或近一周行情。",
+      style: "先讲 liquidity，再讲 structure shift，最后才讲 entry 和 invalidation。"
+    },
+    KC: {
+      tag: "20 EMA 行情解读",
+      assets: "BTC + Gold/SOL",
+      indicators: "20 EMA / RSI / ATR",
+      focus: "用 20 EMA Blueprint 解读近两天或近一周行情，重点回答 entry、SL、TP。",
+      style: "先判断价格在 20 EMA 上方还是下方，再决定是等回踩、等 reclaim，还是观望。"
+    },
+    Caven: {
+      tag: "Scalp 行情解读",
+      assets: "BTC + SOL",
+      indicators: "Liquidity Sweep / VWAP / Volume",
+      focus: "用短线流动性、VWAP 和成交量解读近两天或近一周行情。",
+      style: "先找前高前低和 session high/low，再看扫单后有没有回收 VWAP。"
+    }
+  };
+  const cfg = configs[lib.name];
+  return [
+    buildMarketUpdate(lib.name, cfg, "mon-market", "周一", "2026-05-18", "近两天行情解读", "周末到周一的市场变化"),
+    buildMarketUpdate(lib.name, cfg, "wed-market", "周三", "2026-05-20", "近两天行情跟进", "周一到周三的市场变化"),
+    buildMarketUpdate(lib.name, cfg, "fri-market", "周五", "2026-05-22", "近一周行情复盘", "本周整体市场变化")
+  ];
+}
+
+function buildMarketUpdate(name, cfg, id, label, date, titleTail, windowText) {
+  return {
+    id: `${name.toLowerCase()}-${id}`,
+    kind: "market",
+    label,
+    date,
+    title: `${cfg.tag}：${titleTail}`,
+    indicators: cfg.indicators,
+    assets: cfg.assets,
+    duration: "5-7 分钟",
+    summary: `${name} 用自己的交易框架解读${windowText}，录制前点击刷新行情，让价格、涨跌幅和趋势判断进入口播稿。`,
+    hook: `今天这条不是固定教学课，而是 ${name} 的${windowText}。先刷新行情，再把当前 BTC、ETH、SOL 或 Gold 的走势放进框架里讲清楚。`,
+    outline: [
+      `开场：说明这是一条${titleTail}，先看主流资产是否同步。`,
+      `行情状态：读取最新价格、24H 涨跌幅、RSI、MACD 和 ATR，判断市场是延续、震荡还是转弱。`,
+      `风格框架：${cfg.focus}`,
+      `执行提醒：${cfg.style}`,
+      "结尾：给群成员一个截图作业，要求标出 entry、SL、TP 和无效条件。"
+    ],
+    talk: [
+      `${name} 可以这样讲：今天不要只看价格涨跌，要把行情放进自己的框架里。价格只是结果，结构、动能和风险位才决定这条视频怎么讲。`,
+      cfg.style,
+      "这条行情解读的目的不是预测涨跌，而是告诉群成员：现在应该主动找机会，还是先等确认。"
+    ],
+    marketTemplate: `刷新行情后，根据最新 RSI、MACD、ATR 和 24H 涨跌幅，把主题调整为趋势延续、反弹失败、震荡等待或波动压缩。`,
+    assignment: `让成员提交一张最新图表，写出当前行情属于延续、震荡还是转弱，并标出 entry、SL、TP。`
+  };
 }
 
 function renderScriptVersions(longLines) {
@@ -703,9 +753,29 @@ function isLbankLine(line) {
 }
 
 function getEnglishScript(kolName, script, primary, secondary, market, secondMarket) {
+  if (script.kind === "market") return getMarketReadoutScript(kolName, script, primary, secondary, market, secondMarket);
   if (kolName === "William") return getWilliamScript(script, primary, secondary, market, secondMarket);
   if (kolName === "KC") return getKcScript(script, primary, secondary, market, secondMarket);
   return getCavenScript(script, primary, secondary, market, secondMarket);
+}
+
+function getMarketReadoutScript(kolName, script, primary, secondary, market, secondMarket) {
+  const styleMap = {
+    William: "For William, read the move through ICT and SMC: liquidity first, structure second, confirmation third, and risk management before entry.",
+    KC: "For KC, keep it clean with the 20 EMA Blueprint: trend location, pullback area, RSI or ATR confirmation, then entry, stop loss, and target.",
+    Caven: "For Caven, keep it short-term and visual: liquidity sweep, VWAP reaction, volume confirmation, and a fast invalidation level."
+  };
+  return [
+    `Today is a market readout, not a fixed lesson. Before recording, refresh the market data on the page so the price, 24-hour move, RSI, MACD, and ATR are current.`,
+    marketLine(primary, secondary, market, secondMarket),
+    styleMap[kolName],
+    `If ${primary.replace("USDT", "")} is strong but the comparison chart is weak, reduce confidence. If both charts are moving in the same direction, the readout becomes cleaner.`,
+    `The key is to separate market condition from trade execution. A bullish readout does not mean chase. A bearish readout does not mean panic. We still need a clear level, a clear invalidation point, and a realistic target.`,
+    `Use the latest RSI and MACD to explain whether momentum is improving or fading. Use ATR to explain whether the market has enough range for the target.`,
+    `For the chart, mark three things: the current structure, the entry area, and the invalidation level. If one of these is missing, this is only market commentary, not a trade plan.`,
+    `Close the video with this: refresh the data, read the structure, wait for confirmation, and do not use leverage before the stop loss is defined.`,
+    `Homework: send one fresh chart from today. Mark whether the current market is continuation, range, or weakness, then write the entry, stop loss, and first target.`
+  ];
 }
 
 function introBlock(kolName, styleLine) {
