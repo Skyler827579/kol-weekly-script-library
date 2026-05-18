@@ -475,10 +475,33 @@ function calcAtr(highs, lows, closes, period) {
 }
 
 function renderDirectory() {
-  document.querySelector("#script-list").innerHTML = getWeeklyScripts(state.lib).map((script, index) => `
+  const currentScripts = getWeeklyScripts(state.lib);
+  const archivedScripts = getArchivedScripts(state.lib);
+  document.querySelector("#script-list").innerHTML = `
+    <div class="script-group-title">
+      <span>本周新增</span>
+      <p>周一、周三、周五各新增一篇。刷新行情只更新价格、涨跌幅和指标，不会覆盖脚本主题。</p>
+    </div>
+    ${currentScripts.map((script, index) => renderScriptCard(script, WEEKLY_UPDATE_DAYS[index])).join("")}
+    ${archivedScripts.length ? `
+      <div class="script-group-title archive-title">
+        <span>历史归档</span>
+        <p>之前产出的口播稿会一直保留，可以随时打开并用最新行情重新生成行情段。</p>
+      </div>
+      ${archivedScripts.map(script => renderScriptCard(script, "历史稿件")).join("")}
+    ` : ""}
+  `;
+  document.querySelectorAll("[data-open]").forEach(card => {
+    card.addEventListener("click", () => openScript(card.dataset.open));
+  });
+  renderMarket(false);
+}
+
+function renderScriptCard(script, label) {
+  return `
     <article class="script-card ${script.week === state.script.week ? "current" : ""}" data-open="${script.week}">
       <div class="script-meta">
-        <span>${WEEKLY_UPDATE_DAYS[index]}</span>
+        <span>${label}</span>
         <span>${script.date}</span>
         <span>${script.duration}</span>
         <span>${script.indicators}</span>
@@ -486,11 +509,7 @@ function renderDirectory() {
       <h3>${script.title}</h3>
       <p>${script.summary}</p>
     </article>
-  `).join("");
-  document.querySelectorAll("[data-open]").forEach(card => {
-    card.addEventListener("click", () => openScript(card.dataset.open));
-  });
-  renderMarket(false);
+  `;
 }
 
 function renderMarket(loading) {
@@ -514,7 +533,7 @@ function renderMarket(loading) {
 }
 
 function openScript(week) {
-  const script = getWeeklyScripts(state.lib).find(s => String(s.week) === String(week)) || state.script;
+  const script = state.lib.scripts.find(s => String(s.week) === String(week)) || state.script;
   state.script = script;
   document.querySelector("#directory").hidden = true;
   document.querySelector("#detail").hidden = false;
@@ -531,7 +550,7 @@ function renderDetail(script) {
   const bias = getBias(m);
   document.querySelector("#script-detail").innerHTML = `
     <section class="script-hero">
-      <p class="eyebrow">Page 2 · 当次更新脚本</p>
+      <p class="eyebrow">Page 2 · ${getWeeklyScripts(state.lib).includes(script) ? "本周新增脚本" : "历史归档脚本"}</p>
       <h2>${script.title}</h2>
       <p>${script.summary}</p>
       <div class="mini-row">
@@ -586,6 +605,10 @@ function renderDetail(script) {
 
 function getWeeklyScripts(lib) {
   return lib.scripts.slice(0, 3);
+}
+
+function getArchivedScripts(lib) {
+  return lib.scripts.slice(3);
 }
 
 function renderScriptVersions(longLines) {
