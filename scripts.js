@@ -14,7 +14,8 @@ const LIBRARIES = {
     scripts: [
       {
         week: 0,
-        date: "周一更新",
+        date: "2026-05-18",
+        publishDate: "2026-05-18",
         title: "ICT 策略专项：先扫流动性，再等结构确认",
         indicators: "ICT / Liquidity Sweep / Market Structure",
         assets: "BTC + ETH",
@@ -38,7 +39,8 @@ const LIBRARIES = {
       },
       {
         week: 1,
-        date: "周三更新",
+        date: "2026-05-20",
+        publishDate: "2026-05-20",
         title: "EMA 20 + RSI：趋势回踩怎么找 entry",
         indicators: "20 EMA / RSI",
         assets: "BTC + ETH",
@@ -60,7 +62,8 @@ const LIBRARIES = {
       },
       {
         week: 2,
-        date: "周五更新",
+        date: "2026-05-22",
+        publishDate: "2026-05-22",
         title: "布林带 + ATR：行情变窄时为什么不要 overtrade",
         indicators: "Bollinger Bands / ATR",
         assets: "BTC + ETH",
@@ -82,7 +85,8 @@ const LIBRARIES = {
       },
       {
         week: 3,
-        date: "2026-06-02",
+        date: "2026-05-12",
+        publishDate: "2026-05-12",
         title: "Fibonacci + MACD：回调不是反转",
         indicators: "Fibonacci / MACD",
         assets: "BTC + ETH",
@@ -116,7 +120,8 @@ const LIBRARIES = {
     scripts: [
       {
         week: 0,
-        date: "周一更新",
+        date: "2026-05-18",
+        publishDate: "2026-05-18",
         title: "20 EMA + RSI：Clean Entry Confirmation",
         indicators: "20 EMA / RSI",
         assets: "BTC + Gold/SOL",
@@ -140,7 +145,8 @@ const LIBRARIES = {
       },
       {
         week: 1,
-        date: "周三更新",
+        date: "2026-05-20",
+        publishDate: "2026-05-20",
         title: "20 EMA + MACD：Trend Continuation or Fake Pullback",
         indicators: "20 EMA / MACD",
         assets: "BTC + Gold/SOL",
@@ -163,7 +169,8 @@ const LIBRARIES = {
       },
       {
         week: 2,
-        date: "周五更新",
+        date: "2026-05-22",
+        publishDate: "2026-05-22",
         title: "20 EMA + ATR：How Far Can This Move Go",
         indicators: "20 EMA / ATR",
         assets: "BTC + Gold/SOL",
@@ -186,7 +193,8 @@ const LIBRARIES = {
       },
       {
         week: 3,
-        date: "2026-06-02",
+        date: "2026-05-12",
+        publishDate: "2026-05-12",
         title: "20 EMA + Fibonacci：Pullback Entry Zone",
         indicators: "20 EMA / Fibonacci",
         assets: "BTC + Gold/SOL",
@@ -221,7 +229,8 @@ const LIBRARIES = {
     scripts: [
       {
         week: 0,
-        date: "周一更新",
+        date: "2026-05-18",
+        publishDate: "2026-05-18",
         title: "Liquidity Sweep + VWAP：短线不要追突破，等扫完再确认",
         indicators: "Liquidity Sweep / VWAP",
         assets: "BTC + SOL",
@@ -245,7 +254,8 @@ const LIBRARIES = {
       },
       {
         week: 1,
-        date: "周三更新",
+        date: "2026-05-20",
+        publishDate: "2026-05-20",
         title: "Volume Spike + RSI：扫单后有没有真的进量",
         indicators: "成交量尖峰 / RSI",
         assets: "SOL + BTC",
@@ -267,7 +277,8 @@ const LIBRARIES = {
       },
       {
         week: 2,
-        date: "周五更新",
+        date: "2026-05-22",
+        publishDate: "2026-05-22",
         title: "Session High/Low + ATR：哪几个时间段更适合 scalp",
         indicators: "Session High/Low / ATR",
         assets: "BTC + SOL",
@@ -289,7 +300,8 @@ const LIBRARIES = {
       },
       {
         week: 3,
-        date: "2026-06-02",
+        date: "2026-05-12",
+        publishDate: "2026-05-12",
         title: "Order Block + VWAP：扫完以后回到哪里接",
         indicators: "Order Block / VWAP",
         assets: "BTC + SOL",
@@ -338,11 +350,8 @@ function bindEvents() {
 }
 
 function getCurrentScript(lib) {
-  const now = new Date();
-  const diff = Math.max(0, Math.floor((startOfShanghaiDay(now) - START_MONDAY) / 86400000));
-  const dayInWeek = diff % 7;
-  const slot = dayInWeek >= 4 ? 2 : dayInWeek >= 2 ? 1 : 0;
-  return getWeeklyScripts(lib)[slot] || lib.scripts[0];
+  const published = getWeeklyScripts(lib);
+  return published.at(-1) || getArchivedScripts(lib)[0] || lib.scripts[0];
 }
 
 function startOfShanghaiDay(date) {
@@ -476,13 +485,21 @@ function calcAtr(highs, lows, closes, period) {
 
 function renderDirectory() {
   const currentScripts = getWeeklyScripts(state.lib);
+  const pendingScripts = getPendingScripts(state.lib);
   const archivedScripts = getArchivedScripts(state.lib);
   document.querySelector("#script-list").innerHTML = `
     <div class="script-group-title">
-      <span>本周新增</span>
-      <p>周一、周三、周五各新增一篇。刷新行情只更新价格、涨跌幅和指标，不会覆盖脚本主题。</p>
+      <span>本周已生成</span>
+      <p>周一、周三、周五到当天才新增对应稿件。刷新行情只更新价格、涨跌幅和指标，不会覆盖脚本主题。</p>
     </div>
-    ${currentScripts.map((script, index) => renderScriptCard(script, WEEKLY_UPDATE_DAYS[index])).join("")}
+    ${currentScripts.length ? currentScripts.map(script => renderScriptCard(script, getScheduleLabel(script))).join("") : `<div class="empty-note">本周还没有到脚本发布时间。</div>`}
+    ${pendingScripts.length ? `
+      <div class="script-group-title pending-title">
+        <span>待生成</span>
+        <p>这些稿件会在对应日期由自动化生成后进入“本周已生成”。</p>
+      </div>
+      ${pendingScripts.map(script => renderPendingCard(script, getScheduleLabel(script))).join("")}
+    ` : ""}
     ${archivedScripts.length ? `
       <div class="script-group-title archive-title">
         <span>历史归档</span>
@@ -508,6 +525,20 @@ function renderScriptCard(script, label) {
       </div>
       <h3>${script.title}</h3>
       <p>${script.summary}</p>
+    </article>
+  `;
+}
+
+function renderPendingCard(script, label) {
+  return `
+    <article class="script-card pending-card" aria-disabled="true">
+      <div class="script-meta">
+        <span>${label}</span>
+        <span>${script.date}</span>
+        <span>待自动化生成</span>
+      </div>
+      <h3>${script.title}</h3>
+      <p>这篇会在 ${script.date} 自动生成后开放，不会提前作为已产出稿件显示。</p>
     </article>
   `;
 }
@@ -550,7 +581,7 @@ function renderDetail(script) {
   const bias = getBias(m);
   document.querySelector("#script-detail").innerHTML = `
     <section class="script-hero">
-      <p class="eyebrow">Page 2 · ${getWeeklyScripts(state.lib).includes(script) ? "本周新增脚本" : "历史归档脚本"}</p>
+      <p class="eyebrow">Page 2 · ${getWeeklyScripts(state.lib).includes(script) ? "本周已生成脚本" : "历史归档脚本"}</p>
       <h2>${script.title}</h2>
       <p>${script.summary}</p>
       <div class="mini-row">
@@ -604,11 +635,25 @@ function renderDetail(script) {
 }
 
 function getWeeklyScripts(lib) {
-  return lib.scripts.slice(0, 3);
+  return lib.scripts.slice(0, 3).filter(isPublished);
 }
 
 function getArchivedScripts(lib) {
-  return lib.scripts.slice(3);
+  return lib.scripts.slice(3).filter(isPublished);
+}
+
+function getPendingScripts(lib) {
+  return lib.scripts.slice(0, 3).filter(script => !isPublished(script));
+}
+
+function isPublished(script) {
+  if (!script.publishDate) return true;
+  return startOfShanghaiDay(new Date()) >= new Date(`${script.publishDate}T00:00:00+08:00`);
+}
+
+function getScheduleLabel(script) {
+  const map = { 0: "周一", 1: "周三", 2: "周五" };
+  return map[script.week] || "历史稿件";
 }
 
 function renderScriptVersions(longLines) {
