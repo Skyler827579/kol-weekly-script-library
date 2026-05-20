@@ -350,7 +350,19 @@ function bindEvents() {
 }
 
 function getCurrentScript(lib) {
-  return getMarketUpdates(lib)[0] || getBaseScripts(lib)[0] || lib.scripts[0];
+  const updates = getMarketUpdates(lib);
+  const today = formatShanghaiDate(new Date());
+  return updates.find(script => script.date === today) || updates[0] || getBaseScripts(lib)[0] || lib.scripts[0];
+}
+
+function formatShanghaiDate(date) {
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Asia/Shanghai",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit"
+  }).formatToParts(date).reduce((acc, p) => (acc[p.type] = p.value, acc), {});
+  return `${parts.year}-${parts.month}-${parts.day}`;
 }
 
 function startOfShanghaiDay(date) {
@@ -552,7 +564,7 @@ function openScript(week) {
   document.querySelector("#directory").hidden = true;
   document.querySelector("#detail").hidden = false;
   renderDetail(script);
-  history.replaceState(null, "", `#${script.week}`);
+  history.replaceState(null, "", `#${getScriptId(script)}`);
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
@@ -678,33 +690,113 @@ function getMarketUpdates(lib) {
 }
 
 function buildMarketUpdate(name, cfg, id, label, date, titleTail, windowText) {
+  const override = MARKET_READOUT_OVERRIDES[name]?.[id] || {};
   return {
     id: `${name.toLowerCase()}-${id}`,
     kind: "market",
     label,
     date,
-    title: `${cfg.tag}：${titleTail}`,
+    title: override.title || `${cfg.tag}：${titleTail}`,
     indicators: cfg.indicators,
     assets: cfg.assets,
     duration: "5-7 分钟",
-    summary: `${name} 用自己的交易框架解读${windowText}，录制前点击刷新行情，让价格、涨跌幅和趋势判断进入口播稿。`,
-    hook: `今天这条不是固定教学课，而是 ${name} 的${windowText}。先刷新行情，再把当前 BTC、ETH、SOL 或 Gold 的走势放进框架里讲清楚。`,
-    outline: [
+    summary: override.summary || `${name} 用自己的交易框架解读${windowText}，录制前点击刷新行情，让价格、涨跌幅和趋势判断进入口播稿。`,
+    hook: override.hook || `今天这条不是固定教学课，而是 ${name} 的${windowText}。先刷新行情，再把当前 BTC、ETH、SOL 或 Gold 的走势放进框架里讲清楚。`,
+    outline: override.outline || [
       `开场：说明这是一条${titleTail}，先看主流资产是否同步。`,
       `行情状态：读取最新价格、24H 涨跌幅、RSI、MACD 和 ATR，判断市场是延续、震荡还是转弱。`,
       `风格框架：${cfg.focus}`,
       `执行提醒：${cfg.style}`,
       "结尾：给群成员一个截图作业，要求标出 entry、SL、TP 和无效条件。"
     ],
-    talk: [
+    talk: override.talk || [
       `${name} 可以这样讲：今天不要只看价格涨跌，要把行情放进自己的框架里。价格只是结果，结构、动能和风险位才决定这条视频怎么讲。`,
       cfg.style,
       "这条行情解读的目的不是预测涨跌，而是告诉群成员：现在应该主动找机会，还是先等确认。"
     ],
-    marketTemplate: `刷新行情后，根据最新 RSI、MACD、ATR 和 24H 涨跌幅，把主题调整为趋势延续、反弹失败、震荡等待或波动压缩。`,
-    assignment: `让成员提交一张最新图表，写出当前行情属于延续、震荡还是转弱，并标出 entry、SL、TP。`
+    contextLines: override.contextLines || [],
+    marketTemplate: override.marketTemplate || `刷新行情后，根据最新 RSI、MACD、ATR 和 24H 涨跌幅，把主题调整为趋势延续、反弹失败、震荡等待或波动压缩。`,
+    assignment: override.assignment || `让成员提交一张最新图表，写出当前行情属于延续、震荡还是转弱，并标出 entry、SL、TP。`
   };
 }
+
+const MARKET_READOUT_OVERRIDES = {
+  William: {
+    "wed-market": {
+      title: "ICT 行情解读：周中回落后的结构确认",
+      summary: "William 用 ICT/SMC 跟进周一到周三的风险回落：先看流动性是否被扫，再看 BTC/ETH 能否重新形成结构确认。",
+      hook: "今天 William 这条周三行情跟进，不是猜底，也不是追反弹。周初风险资产回落后，我们只做一件事：看扫单以后有没有真正的 structure shift。",
+      outline: [
+        "开场：说明周一到周三市场从风险偏好降温进入确认阶段，不要把第一根反弹 K 线当作反转。",
+        "流动性：标出 BTC 最近被扫的前低/前高，判断这次是有效 sweep 后回收，还是跌破后继续派发。",
+        "结构：等待 BOS 或 CHOCH；没有结构转换时，只能说 market readout，不能说 entry setup。",
+        "动能：刷新行情后读取 RSI、MACD、ATR，用实时数据判断 ETH 是否同步修复，还是继续拖累主流情绪。",
+        "执行：给出多空两套 invalidation，不在中间位置追单，等价格回到 FVG、order block 或清晰折价区。"
+      ],
+      talk: [
+        "William 可以这样讲：周初这波不是单纯看跌幅，重点是 liquidity 有没有被拿掉，以及拿掉以后市场有没有重新给结构。",
+        "如果 BTC 扫低以后能够重新站回短线结构，再配合 ETH 动能修复，才有资格讨论 bullish CHOCH 后的回踩。",
+        "如果反弹只是回到 broken structure 附近就被打下来，那就是 classic sell-side continuation，不要因为一根绿 K 就急着抄底。"
+      ],
+      contextLines: [
+        "The latest context is a midweek follow-up after a risk-off pullback: Bitcoin gave back recent upside, altcoins weakened, and traders are watching whether the market can reclaim structure instead of simply bouncing.",
+        "For William, the readout should treat this as a liquidity and structure test. A bounce only matters if it creates CHOCH or BOS; otherwise it is just price returning into a supply area."
+      ],
+      marketTemplate: "刷新后如果 BTC/ETH 的 RSI 与 MACD 同步修复，主讲 sweep low 后的 bullish CHOCH；如果 BTC 反弹失败或 ETH 继续弱，主讲 broken structure retest 和等待下一个 discount zone。",
+      assignment: "让成员提交 BTC 或 ETH 最新 4H 图，标出周初被扫的流动性、是否出现 BOS/CHOCH、entry zone、SL 和第一目标。"
+    }
+  },
+  KC: {
+    "wed-market": {
+      title: "20 EMA 行情解读：周中反弹是不是 reclaim",
+      summary: "KC 用 20 EMA Blueprint 跟进近两天回落后的反弹质量：价格位置、EMA reclaim、RSI/MACD 确认和现实目标。",
+      hook: "KC 今天不要讲预测，讲流程。周初市场回落以后，所有人都想知道能不能接回去，答案只看一件事：有没有 reclaim 20 EMA。",
+      outline: [
+        "开场：把周三定位成近两天 move 的 follow-up，不追低也不盲目抄底。",
+        "位置：刷新行情后确认 BTC、Gold 或 SOL 在 20 EMA 上方还是下方。",
+        "确认：如果价格重新站上 20 EMA，检查 RSI 是否回到中线附近，MACD 柱体是否停止恶化。",
+        "目标：用实时 ATR 决定 TP 是否合理，不用固定价格喊单。",
+        "执行：entry 必须靠近 EMA 或 reclaim 后第一次回踩，SL 放在回踩低点外侧。"
+      ],
+      talk: [
+        "KC 可以这样讲：after a selloff, the question is not 'is it cheap?' The question is 'did price reclaim the 20 EMA and did momentum come back?'",
+        "如果 BTC 或 SOL 还在 20 EMA 下方，今天的重点不是做多，而是等 reclaim。没有 reclaim，就没有 Blueprint entry。",
+        "Gold 这两天受美元和美债收益率压制，所以如果用 Gold 做例子，要提醒大家：价格没有站回 EMA 前，反弹只当反弹，不当趋势恢复。"
+      ],
+      contextLines: [
+        "The latest context is a two-day follow-up after broad crypto weakness and a stronger dollar-yield backdrop for gold. The readout should focus on reclaim quality, not bottom-picking.",
+        "For KC, the script should keep every decision inside the 20 EMA Blueprint: trend location first, confirmation second, ATR-based target third."
+      ],
+      marketTemplate: "刷新后如果主图重新站上 20 EMA 且 RSI/MACD 修复，主讲 reclaim 后第一次回踩；如果仍低于 EMA，主讲等待反弹到 EMA 附近失败或继续观望。",
+      assignment: "让成员提交 BTC、Gold 或 SOL 最新图，标出 20 EMA、是否 reclaim、entry zone、SL、以及按 ATR 推导的第一目标。"
+    }
+  },
+  Caven: {
+    "wed-market": {
+      title: "Scalp 行情解读：周中扫单后的 VWAP 反应",
+      summary: "Caven 用 liquidity、VWAP 和成交量跟进近两天波动：不接飞刀，只等扫高/扫低后的回收或拒绝。",
+      hook: "Caven 今天这条很适合短线：周初大波动以后，不要抢第一下。先看谁被扫，再看价格有没有回到 VWAP。",
+      outline: [
+        "开场：说明周三是近两天 move 的 scalp follow-up，先等市场把追单的人清掉。",
+        "流动性：标出 SOL/BTC 近两天的 session high/low，等其中一边被扫。",
+        "VWAP：扫低后只有重新站回 VWAP 才考虑 long scalp；扫高后跌回 VWAP 下方才考虑 short scalp。",
+        "动能：刷新行情后看 RSI 和 ATR，判断这次波动是否足够支付 scalp 目标。",
+        "执行：最多等两个确认，不在区间中间开仓，失败就走。"
+      ],
+      talk: [
+        "Caven 可以这样讲：周初这种 move 后，最容易出现的就是假突破和 revenge trade。我们不抢方向，只看 sweep plus VWAP reaction。",
+        "如果 SOL 扫前低后很快回到 VWAP 上方，再配合 RSI 从低位拐头，才是可以讲的 long scalp。",
+        "如果价格只是弹一下但站不回 VWAP，那就是 weak bounce。短线不要把 weak bounce 变成长期扛单。"
+      ],
+      contextLines: [
+        "The latest context is a volatile midweek market after a broad liquidation-style pullback. For short-term traders, the priority is avoiding the first emotional candle.",
+        "For Caven, the readout should be built around session highs and lows, then VWAP reaction. If price is between levels, the script should tell viewers to wait."
+      ],
+      marketTemplate: "刷新后如果 SOL/BTC 的 RSI 修复且 ATR 足够，主讲扫低回收 VWAP；如果 RSI 弱或价格在 VWAP 下方，主讲扫高失败、反弹做空或等待下一个 session 边界。",
+      assignment: "让成员提交 SOL 或 BTC 15M 图，标出近两天 session high/low、扫单 K 线、VWAP、entry、SL 和第一止盈。"
+    }
+  }
+};
 
 function renderScriptVersions(longLines) {
   const orderedLongLines = reorderLongVersion(longLines);
@@ -768,6 +860,7 @@ function getMarketReadoutScript(kolName, script, primary, secondary, market, sec
   return [
     `Today is a market readout, not a fixed lesson. Before recording, refresh the market data on the page so the price, 24-hour move, RSI, MACD, and ATR are current.`,
     marketLine(primary, secondary, market, secondMarket),
+    ...(script.contextLines || []),
     styleMap[kolName],
     `If ${primary.replace("USDT", "")} is strong but the comparison chart is weak, reduce confidence. If both charts are moving in the same direction, the readout becomes cleaner.`,
     `The key is to separate market condition from trade execution. A bullish readout does not mean chase. A bearish readout does not mean panic. We still need a clear level, a clear invalidation point, and a realistic target.`,
