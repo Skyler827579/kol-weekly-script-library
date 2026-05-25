@@ -1,5 +1,6 @@
-const START_MONDAY = new Date("2026-05-18T00:00:00+08:00");
+const START_MONDAY = new Date("2026-05-25T00:00:00+08:00");
 const WEEKLY_UPDATE_DAYS = ["周一", "周三", "周五"];
+const PREVIOUS_WEEK_DATES = ["2026-05-18", "2026-05-20", "2026-05-22"];
 
 const LIBRARIES = {
   william: {
@@ -14,8 +15,8 @@ const LIBRARIES = {
     scripts: [
       {
         week: 0,
-        date: "2026-05-18",
-        publishDate: "2026-05-18",
+        date: "2026-05-25",
+        publishDate: "2026-05-25",
         title: "ICT 策略专项：先扫流动性，再等结构确认",
         indicators: "ICT / Liquidity Sweep / Market Structure",
         assets: "BTC + ETH",
@@ -39,8 +40,8 @@ const LIBRARIES = {
       },
       {
         week: 1,
-        date: "2026-05-20",
-        publishDate: "2026-05-20",
+        date: "2026-05-27",
+        publishDate: "2026-05-27",
         title: "EMA 20 + RSI：趋势回踩怎么找 entry",
         indicators: "20 EMA / RSI",
         assets: "BTC + ETH",
@@ -62,8 +63,8 @@ const LIBRARIES = {
       },
       {
         week: 2,
-        date: "2026-05-22",
-        publishDate: "2026-05-22",
+        date: "2026-05-29",
+        publishDate: "2026-05-29",
         title: "布林带 + ATR：行情变窄时为什么不要 overtrade",
         indicators: "Bollinger Bands / ATR",
         assets: "BTC + ETH",
@@ -120,8 +121,8 @@ const LIBRARIES = {
     scripts: [
       {
         week: 0,
-        date: "2026-05-18",
-        publishDate: "2026-05-18",
+        date: "2026-05-25",
+        publishDate: "2026-05-25",
         title: "20 EMA + RSI：Clean Entry Confirmation",
         indicators: "20 EMA / RSI",
         assets: "BTC + Gold/SOL",
@@ -145,8 +146,8 @@ const LIBRARIES = {
       },
       {
         week: 1,
-        date: "2026-05-20",
-        publishDate: "2026-05-20",
+        date: "2026-05-27",
+        publishDate: "2026-05-27",
         title: "20 EMA + MACD：Trend Continuation or Fake Pullback",
         indicators: "20 EMA / MACD",
         assets: "BTC + Gold/SOL",
@@ -169,8 +170,8 @@ const LIBRARIES = {
       },
       {
         week: 2,
-        date: "2026-05-22",
-        publishDate: "2026-05-22",
+        date: "2026-05-29",
+        publishDate: "2026-05-29",
         title: "20 EMA + ATR：How Far Can This Move Go",
         indicators: "20 EMA / ATR",
         assets: "BTC + Gold/SOL",
@@ -229,8 +230,8 @@ const LIBRARIES = {
     scripts: [
       {
         week: 0,
-        date: "2026-05-18",
-        publishDate: "2026-05-18",
+        date: "2026-05-25",
+        publishDate: "2026-05-25",
         title: "Liquidity Sweep + VWAP：短线不要追突破，等扫完再确认",
         indicators: "Liquidity Sweep / VWAP",
         assets: "BTC + SOL",
@@ -254,8 +255,8 @@ const LIBRARIES = {
       },
       {
         week: 1,
-        date: "2026-05-20",
-        publishDate: "2026-05-20",
+        date: "2026-05-27",
+        publishDate: "2026-05-27",
         title: "Volume Spike + RSI：扫单后有没有真的进量",
         indicators: "成交量尖峰 / RSI",
         assets: "SOL + BTC",
@@ -277,8 +278,8 @@ const LIBRARIES = {
       },
       {
         week: 2,
-        date: "2026-05-22",
-        publishDate: "2026-05-22",
+        date: "2026-05-29",
+        publishDate: "2026-05-29",
         title: "Session High/Low + ATR：哪几个时间段更适合 scalp",
         indicators: "Session High/Low / ATR",
         assets: "BTC + SOL",
@@ -634,7 +635,13 @@ function getBaseScripts(lib) {
 }
 
 function getArchivedScripts(lib) {
-  return lib.scripts.slice(3);
+  const archivedBaseScripts = getBaseScripts(lib).map((script, index) => ({
+    ...script,
+    id: `${lib.name.toLowerCase()}-base-${PREVIOUS_WEEK_DATES[index]}`,
+    date: PREVIOUS_WEEK_DATES[index],
+    publishDate: PREVIOUS_WEEK_DATES[index]
+  }));
+  return [...archivedBaseScripts, ...getArchivedMarketUpdates(lib), ...lib.scripts.slice(3)];
 }
 
 function getAllScripts(lib) {
@@ -657,7 +664,7 @@ function getScheduleLabel(script) {
   return map[script.week] || "历史稿件";
 }
 
-function getMarketUpdates(lib) {
+function getMarketUpdateConfig(lib) {
   const configs = {
     William: {
       tag: "ICT 行情解读",
@@ -681,18 +688,31 @@ function getMarketUpdates(lib) {
       style: "先找前高前低和 session high/low，再看扫单后有没有回收 VWAP。"
     }
   };
-  const cfg = configs[lib.name];
+  return configs[lib.name];
+}
+
+function getMarketUpdates(lib) {
+  const cfg = getMarketUpdateConfig(lib);
   return [
-    buildMarketUpdate(lib.name, cfg, "mon-market", "周一", "2026-05-18", "近两天行情解读", "周末到周一的市场变化"),
-    buildMarketUpdate(lib.name, cfg, "wed-market", "周三", "2026-05-20", "近两天行情跟进", "周一到周三的市场变化"),
-    buildMarketUpdate(lib.name, cfg, "fri-market", "周五", "2026-05-22", "近一周行情复盘", "本周整体市场变化")
+    buildMarketUpdate(lib.name, cfg, "mon-market", "周一", "2026-05-25", "近两天行情解读", "周末到周一的市场变化"),
+    buildMarketUpdate(lib.name, cfg, "wed-market", "周三", "2026-05-27", "近两天行情跟进", "周一到周三的市场变化"),
+    buildMarketUpdate(lib.name, cfg, "fri-market", "周五", "2026-05-29", "近一周行情复盘", "本周整体市场变化")
   ];
 }
 
-function buildMarketUpdate(name, cfg, id, label, date, titleTail, windowText) {
-  const override = MARKET_READOUT_OVERRIDES[name]?.[id] || {};
+function getArchivedMarketUpdates(lib) {
+  const cfg = getMarketUpdateConfig(lib);
+  return [
+    buildMarketUpdate(lib.name, cfg, "mon-market", "周一", "2026-05-18", "近两天行情解读", "周末到周一的市场变化", ARCHIVED_MARKET_READOUT_OVERRIDES, true),
+    buildMarketUpdate(lib.name, cfg, "wed-market", "周三", "2026-05-20", "近两天行情跟进", "周一到周三的市场变化", ARCHIVED_MARKET_READOUT_OVERRIDES, true),
+    buildMarketUpdate(lib.name, cfg, "fri-market", "周五", "2026-05-22", "近一周行情复盘", "本周整体市场变化", ARCHIVED_MARKET_READOUT_OVERRIDES, true)
+  ];
+}
+
+function buildMarketUpdate(name, cfg, id, label, date, titleTail, windowText, overrides = MARKET_READOUT_OVERRIDES, archived = false) {
+  const override = overrides[name]?.[id] || {};
   return {
-    id: `${name.toLowerCase()}-${id}`,
+    id: `${name.toLowerCase()}-${id}${archived ? `-${date}` : ""}`,
     kind: "market",
     label,
     date,
@@ -721,6 +741,84 @@ function buildMarketUpdate(name, cfg, id, label, date, titleTail, windowText) {
 }
 
 const MARKET_READOUT_OVERRIDES = {
+  William: {
+    "mon-market": {
+      title: "ICT 行情解读：周一先读周末区间流动性",
+      summary: "William 用 ICT/SMC 处理周末到周一的行情切换：刷新实时数据后，先看周末区间哪侧流动性被扫，再等结构确认。",
+      hook: "今天 William 这条周一行情，不预设方向。周末区间已经给出流动性位置，先刷新行情，看哪一边被拿掉，再判断 Monday move 有没有 structure shift。",
+      outline: [
+        "开场：说明周一先处理周末到主交易时段的转换，不用固定价位预判方向。",
+        "流动性：标出周末形成的前高/前低，观察周一是否先扫 buy-side 或 sell-side liquidity。",
+        "结构：扫单后只有出现 BOS 或 CHOCH，才进入 entry setup；没有转换就继续读行情。",
+        "动能：刷新行情后读取 BTC/ETH 的 RSI、MACD 和 ATR，确认结构是否有同步动能。",
+        "执行：等 FVG 或 order block 回踩，画出 invalidation，不追周一第一段扩张。"
+      ],
+      talk: [
+        "William 可以这样讲：Monday 的第一件事不是猜方向，而是确认周末留在图上的 liquidity 被谁拿走。",
+        "如果扫低以后重新收回结构，并且 BTC 与 ETH 动能同步修复，再讲 bullish CHOCH 后等待折价回踩。",
+        "如果扫高以后马上失守结构，或者两张图不同步，就把它当作 liquidity grab，先保护风险而不是追 entry。"
+      ],
+      contextLines: [
+        "The Monday context is the transition out of weekend trading into the first full session of the week. Refresh live data to judge whether the weekend range is being accepted or swept before stating a direction.",
+        "For William, turn that live read into ICT and SMC logic: locate liquidity, wait for CHOCH or BOS, then plan the retracement and invalidation."
+      ],
+      marketTemplate: "刷新后如果 BTC/ETH 的实时动能与扫低回收结构一致，主讲 bullish CHOCH 后的回踩确认；如果扫高失败或动能不同步，主讲 liquidity grab、无效位和等待。",
+      assignment: "让成员提交 BTC 或 ETH 周一最新 4H 图，标出周末区间、被扫的 liquidity、BOS/CHOCH、entry zone、SL 和第一目标。"
+    }
+  },
+  KC: {
+    "mon-market": {
+      title: "20 EMA 行情解读：周一先等 reclaim 或守线",
+      summary: "KC 用 20 EMA Blueprint 解读周末到周一的走势：刷新后先定价格与均线的位置，再用 RSI 和 ATR 计划 entry 与 target。",
+      hook: "KC 今天周一只问一个清楚的问题：周末 move 进入新一周以后，价格守住 20 EMA，还是需要先等 reclaim？",
+      outline: [
+        "开场：周一先处理最近两天 move，不因周末波动直接追单。",
+        "位置：刷新行情后检查 BTC、Gold 或 SOL 在 20 EMA 上方、下方，还是正在 reclaim。",
+        "确认：站上或守住 EMA 后，再用实时 RSI 和 MACD 判断动能质量。",
+        "目标：用实时 ATR 给第一目标和止损留合理空间，不写固定目标价格。",
+        "执行：只讲 EMA 附近的回踩或 reclaim 后第一次回踩，其他位置继续等待。"
+      ],
+      talk: [
+        "KC 可以这样讲：a weekend move is not an entry by itself. On Monday, the Blueprint starts with one question: where is price relative to the 20 EMA?",
+        "如果价格守住 EMA，再结合 RSI 质量和 ATR 规划目标；如果还在 EMA 下方，今天最好的 setup 可能就是等待 reclaim。",
+        "Target 不能从情绪开始，必须从实时 ATR 和清晰的 stop loss 开始。"
+      ],
+      contextLines: [
+        "The Monday context is a fresh read of the weekend-to-week-open transition. Refresh the chart before recording, then classify the move by its relationship to the 20 EMA rather than assuming continuation.",
+        "For KC, the 20 EMA Blueprint keeps the message disciplined: location first, momentum confirmation second, ATR-based target and stop third."
+      ],
+      marketTemplate: "刷新后如果主图守住或重新站上 20 EMA 且 RSI/MACD 配合，主讲第一次回踩；如果仍在 EMA 下方或 ATR 不支持目标，主讲等待 reclaim 或减少交易。",
+      assignment: "让成员提交 BTC、Gold 或 SOL 周一最新图，标出 20 EMA、reclaim 或拒绝位置、entry zone、SL 以及按实时 ATR 制定的目标。"
+    }
+  },
+  Caven: {
+    "mon-market": {
+      title: "Scalp 行情解读：周一等周末区间 sweep 与 VWAP",
+      summary: "Caven 用 liquidity、VWAP 和 ATR 处理周一短线：先刷新数据，再等周末区间或 session 边界被扫后的确认。",
+      hook: "Caven 今天周一不要追开盘第一根情绪 K 线。先把周末 high/low 和 session level 画出来，等 sweep，再看 VWAP reaction。",
+      outline: [
+        "开场：把周一定义成周末区间向新 session 过渡的 scalp readout，不先猜方向。",
+        "流动性：标出 SOL/BTC 的周末 high/low 与当前 session high/low，等待其中一侧被扫。",
+        "VWAP：扫低后回收 VWAP 才讲 long scalp；扫高后跌回 VWAP 下方才讲 short scalp。",
+        "波动：刷新后读取实时 RSI 和 ATR，确认当前 range 是否足够支持快速目标。",
+        "执行：只在边界反应入场，止损放在 sweep 外侧，区间中间不追。"
+      ],
+      talk: [
+        "Caven 可以这样讲：Monday scalp 最容易亏在一开盘就追，正确顺序是先画周末边界，再等市场扫一边。",
+        "如果 SOL 扫低、重新站上 VWAP，而且实时动能支持反应，才有 clean scalp long；扫高失败就是另一套计划。",
+        "如果还夹在区间中间，或者 ATR 不给空间，今天就先等下一次 session boundary。"
+      ],
+      contextLines: [
+        "The Monday context is the weekend range meeting a new active session. Refresh live data and let the sweep plus VWAP reaction define the short-term bias.",
+        "For Caven, the actionable sequence is session boundary, liquidity sweep, VWAP reclaim or rejection, ATR check, then fast invalidation."
+      ],
+      marketTemplate: "刷新后如果 SOL/BTC 扫低并回收 VWAP、且实时 ATR 足够，主讲快速 long scalp；如果扫高失败或仍在 VWAP 下方，主讲 short scalp 或等待下一边界。",
+      assignment: "让成员提交 SOL 或 BTC 周一 15M 图，标出周末 high/low、session 边界、一次 sweep、VWAP、entry、SL 和第一止盈。"
+    }
+  }
+};
+
+const ARCHIVED_MARKET_READOUT_OVERRIDES = {
   William: {
     "wed-market": {
       title: "ICT 行情解读：周中回落后的结构确认",
