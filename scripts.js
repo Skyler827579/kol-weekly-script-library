@@ -764,6 +764,29 @@ const MARKET_READOUT_OVERRIDES = {
       ],
       marketTemplate: "刷新后如果 BTC/ETH 的实时动能与扫低回收结构一致，主讲 bullish CHOCH 后的回踩确认；如果扫高失败或动能不同步，主讲 liquidity grab、无效位和等待。",
       assignment: "让成员提交 BTC 或 ETH 周一最新 4H 图，标出周末区间、被扫的 liquidity、BOS/CHOCH、entry zone、SL 和第一目标。"
+    },
+    "wed-market": {
+      title: "ICT 行情解读：周三跟进扫单后的结构延续",
+      summary: "William 用 ICT/SMC 跟进周一到周三的最新两日行情：先看早周扫单后有没有延续结构，再决定讲回踩确认还是反弹失败。",
+      hook: "今天 William 这条周三行情跟进，不是重新猜方向，而是检查周一那次 liquidity move 之后，市场有没有把结构真正延续出来。",
+      outline: [
+        "开场：把周三定义成对近两天行情的 follow-up，不用固定价位，而是复盘周初扫单后的延续质量。",
+        "流动性：先标出周一到周三被扫的前高、前低和 session edge，确认 buy-side 还是 sell-side liquidity 先被拿掉。",
+        "结构：如果扫单后已经形成更清楚的 BOS 或 CHOCH，主讲回踩确认；如果只是反弹到 broken structure，主讲 failed recovery。",
+        "动能：刷新行情后读取 BTC/ETH 的 RSI、MACD、ATR，判断结构延续有没有动能同步，而不是只看单边价格。",
+        "执行：只保留有 FVG、order block 和 invalidation 的 setup；没有二次确认，就把重点放在等待。"
+      ],
+      talk: [
+        "William 可以这样讲：周三最重要的不是今天涨了还是跌了，而是周初那次 sweep 之后，市场有没有把新的结构站稳。",
+        "如果 BTC 扫低后已经走出 higher low，同时 ETH 的动能也在修复，今天就讲 bullish CHOCH 之后等折价回踩，而不是追已经拉开的价格。",
+        "如果价格只是反弹回到 broken structure 附近，MACD 和 RSI 也没有同步改善，那这更像 liquidity run 之后的弱修复，不是 clean continuation。"
+      ],
+      contextLines: [
+        "The Wednesday context is a two-day follow-up on the move that started early this week. Refresh live data first, then judge whether the initial sweep created a stable structure shift or only a temporary reaction.",
+        "For William, keep the readout inside ICT and SMC logic: locate the liquidity that was taken, identify whether BOS or CHOCH held, and explain where a pullback becomes valid or invalid."
+      ],
+      marketTemplate: "刷新后如果 BTC/ETH 的 RSI 与 MACD 同步修复，主讲 sweep 后的结构延续和回踩确认；如果反弹没有站稳结构或动能分化，主讲 broken structure retest、降低预期和继续等待。",
+      assignment: "让成员提交 BTC 或 ETH 周三最新 4H 图，标出近两天的 liquidity sweep、BOS/CHOCH、entry zone、SL 和第一目标。"
     }
   },
   KC: {
@@ -789,6 +812,29 @@ const MARKET_READOUT_OVERRIDES = {
       ],
       marketTemplate: "刷新后如果主图守住或重新站上 20 EMA 且 RSI/MACD 配合，主讲第一次回踩；如果仍在 EMA 下方或 ATR 不支持目标，主讲等待 reclaim 或减少交易。",
       assignment: "让成员提交 BTC、Gold 或 SOL 周一最新图，标出 20 EMA、reclaim 或拒绝位置、entry zone、SL 以及按实时 ATR 制定的目标。"
+    },
+    "wed-market": {
+      title: "20 EMA 行情解读：周三跟进守线还是假 reclaim",
+      summary: "KC 用 20 EMA Blueprint 跟进周一到周三的最新两日走势：先看价格是守住均线、重新 reclaim，还是只给了一个假反弹。",
+      hook: "KC 今天周三只讲一个关键判断：最近两天这段 move，到底是守住 20 EMA 的趋势延续，还是只做了一个看起来很像机会的假 reclaim？",
+      outline: [
+        "开场：把周三当作近两天行情的 quality check，不追已经离开均线的位置。",
+        "位置：刷新行情后先看 BTC、Gold 或 SOL 在 20 EMA 上方、下方，还是刚刚重新站回去。",
+        "确认：如果价格在 EMA 附近，继续看 RSI 是否守住中线，以及 MACD 柱体有没有停止恶化。",
+        "目标：用实时 ATR 重新估算第一目标，避免周三在波动收缩时还给过大的 TP。",
+        "执行：只有 EMA 附近的第一次回踩或 reclaim 后第一次 pullback 才叫 clean setup，其余位置继续等。"
+      ],
+      talk: [
+        "KC 可以这样讲：the midweek question is not whether the market bounced. The question is whether price actually respected or reclaimed the 20 EMA Blueprint.",
+        "如果 BTC 或 SOL 已经重新站上 20 EMA，而且 RSI 回到中线附近，MACD 也不再恶化，今天就讲 reclaim 之后第一次回踩的 entry、SL 和 realistic target。",
+        "如果价格只是短暂弹回 EMA 下面，或者 ATR 已经缩小，那就直接告诉群成员：this is a weak bounce, not a clean setup yet."
+      ],
+      contextLines: [
+        "The Wednesday context is a follow-up on the first two trading days of the week. Refresh the page before recording, then classify the move by its relationship to the 20 EMA instead of assuming the bounce is real.",
+        "For KC, the Blueprint stays strict: location around the 20 EMA first, RSI and MACD quality second, ATR-based target and stop loss third."
+      ],
+      marketTemplate: "刷新后如果主图守住或 reclaim 20 EMA 且 RSI/MACD 配合，主讲第一次回踩；如果仍在 EMA 下方、ATR 收缩或动能没有恢复，主讲假 reclaim、缩短目标或继续观望。",
+      assignment: "让成员提交 BTC、Gold 或 SOL 周三最新图，标出 20 EMA、守线或假 reclaim 位置、entry zone、SL 和按实时 ATR 计算的第一目标。"
     }
   },
   Caven: {
@@ -814,6 +860,29 @@ const MARKET_READOUT_OVERRIDES = {
       ],
       marketTemplate: "刷新后如果 SOL/BTC 扫低并回收 VWAP、且实时 ATR 足够，主讲快速 long scalp；如果扫高失败或仍在 VWAP 下方，主讲 short scalp 或等待下一边界。",
       assignment: "让成员提交 SOL 或 BTC 周一 15M 图，标出周末 high/low、session 边界、一次 sweep、VWAP、entry、SL 和第一止盈。"
+    },
+    "wed-market": {
+      title: "Scalp 行情解读：周三跟进二次 sweep 和 VWAP 反应",
+      summary: "Caven 用 liquidity、VWAP 和短线波动跟进周一到周三的最新两日行情：重点看周初边界被扫后，今天还有没有二次确认。",
+      hook: "Caven 今天周三不要再追周初那一根情绪 K 线。我们只看最近两天扫过的边界，今天有没有二次 sweep、VWAP reclaim，或者直接变成 trap breakout。",
+      outline: [
+        "开场：把周三定义成近两天 move 的 scalp follow-up，不讲中间位置，只讲 session boundary。",
+        "流动性：标出 SOL/BTC 最近两天最清楚的 session high/low，确认哪一侧已经被扫过，哪一侧今天还可能再测试。",
+        "VWAP：第一次 sweep 后如果今天还能站回 VWAP，主讲 continuation scalp；如果重新跌回 VWAP 下方，主讲 failed reclaim。",
+        "波动：刷新行情后读取 RSI 和 ATR，确认周三还有没有空间支持第一目标，还是只能做更快的反应单。",
+        "执行：最多等两个确认，止损放在最新 sweep 外侧，区间中间和低波动时段都不追。"
+      ],
+      talk: [
+        "Caven 可以这样讲：周三短线最重要的不是再追周初方向，而是看周初那次 sweep 之后，今天有没有二次确认让你重新参与。",
+        "如果 SOL 扫低后重新站回 VWAP，而且 RSI 从低位继续修复，今天可以讲 continuation scalp；如果弹一下又掉回 VWAP 下方，那就是 weak reclaim。",
+        "如果 ATR 已经缩小，或者价格卡在 session 中间，今天最专业的做法就是告诉成员先等下一次边界反应。"
+      ],
+      contextLines: [
+        "The Wednesday context is a two-day short-term follow-up after the first active sessions of the week. Refresh live data and decide whether the early sweep is being accepted, rejected, or retested.",
+        "For Caven, keep the message tight: recent session boundary, liquidity sweep, VWAP reclaim or failure, ATR check, then fast invalidation."
+      ],
+      marketTemplate: "刷新后如果 SOL/BTC 在最近两天的边界 sweep 后重新站回 VWAP、且 ATR 仍支持空间，主讲 continuation scalp；如果价格低于 VWAP 或 ATR 收缩，主讲 failed reclaim、缩短目标或继续等待。",
+      assignment: "让成员提交 SOL 或 BTC 周三 15M 图，标出最近两天 session high/low、一次二次 sweep、VWAP、entry、SL 和第一止盈。"
     }
   }
 };
