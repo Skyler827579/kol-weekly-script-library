@@ -1,5 +1,5 @@
 const START_MONDAY = new Date("2026-05-25T00:00:00+08:00");
-const WEEKLY_UPDATE_DAYS = ["周一", "周三", "周五"];
+const WEEKLY_UPDATE_DAYS = ["每日", "每日", "每日"];
 const PREVIOUS_WEEK_DATES = ["2026-05-18", "2026-05-20", "2026-05-22"];
 
 const LIBRARIES = {
@@ -506,8 +506,8 @@ function renderDirectory() {
     </div>
     ${baseScripts.map(script => renderScriptCard(script, getScheduleLabel(script))).join("")}
     <div class="script-group-title market-title">
-      <span>周一 / 周三 / 周五近期行情解读</span>
-      <p>这三篇会按 KOL 风格解读近两天或近一周行情；录制前点“刷新行情”，价格、涨跌幅、趋势和口播行情段会同步更新。</p>
+      <span>每日近期行情解读</span>
+      <p>每日行情解读会按 KOL 风格跟进当天市场状态；录制前点“刷新行情”，价格、涨跌幅、趋势和口播行情段会同步更新。</p>
     </div>
     ${marketUpdates.map(script => renderScriptCard(script, getScheduleLabel(script))).join("")}
     ${archivedScripts.length ? `
@@ -660,7 +660,7 @@ function getScriptTypeLabel(lib, script) {
 
 function getScheduleLabel(script) {
   if (script.label) return script.label;
-  const map = { 0: "周一", 1: "周三", 2: "周五" };
+  const map = { 0: "每日", 1: "每日", 2: "每日" };
   return map[script.week] || "历史稿件";
 }
 
@@ -670,21 +670,21 @@ function getMarketUpdateConfig(lib) {
       tag: "ICT 行情解读",
       assets: "BTC + ETH",
       indicators: "Market Structure / RSI / MACD",
-      focus: "用 ICT/SMC 的结构、流动性和确认逻辑解读近两天或近一周行情。",
+      focus: "用 ICT/SMC 的结构、流动性和确认逻辑解读当天行情。",
       style: "先讲 liquidity，再讲 structure shift，最后才讲 entry 和 invalidation。"
     },
     KC: {
       tag: "20 EMA 行情解读",
       assets: "BTC + Gold/SOL",
       indicators: "20 EMA / RSI / ATR",
-      focus: "用 20 EMA Blueprint 解读近两天或近一周行情，重点回答 entry、SL、TP。",
+      focus: "用 20 EMA Blueprint 解读当天行情，重点回答 entry、SL、TP。",
       style: "先判断价格在 20 EMA 上方还是下方，再决定是等回踩、等 reclaim，还是观望。"
     },
     Caven: {
       tag: "Scalp 行情解读",
       assets: "BTC + SOL",
       indicators: "Liquidity Sweep / VWAP / Volume",
-      focus: "用短线流动性、VWAP 和成交量解读近两天或近一周行情。",
+      focus: "用短线流动性、VWAP 和成交量解读当天行情。",
       style: "先找前高前低和 session high/low，再看扫单后有没有回收 VWAP。"
     }
   };
@@ -694,9 +694,9 @@ function getMarketUpdateConfig(lib) {
 function getMarketUpdates(lib) {
   const cfg = getMarketUpdateConfig(lib);
   return [
-    buildMarketUpdate(lib.name, cfg, "mon-market", "周一", "2026-05-25", "近两天行情解读", "周末到周一的市场变化"),
-    buildMarketUpdate(lib.name, cfg, "wed-market", "周三", "2026-05-27", "近两天行情跟进", "周一到周三的市场变化"),
-    buildMarketUpdate(lib.name, cfg, "fri-market", "周五", "2026-05-29", "近一周行情复盘", "本周整体市场变化")
+    buildMarketUpdate(lib.name, cfg, "mon-market", "每日", "2026-05-25", "当日行情解读", "当天最新市场变化"),
+    buildMarketUpdate(lib.name, cfg, "wed-market", "每日", "2026-05-27", "当日行情跟进", "当天最新市场变化"),
+    buildMarketUpdate(lib.name, cfg, "fri-market", "每日", "2026-05-29", "当日行情复盘", "当天最新市场变化")
   ];
 }
 
