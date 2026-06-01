@@ -1,6 +1,7 @@
-const START_MONDAY = new Date("2026-05-25T00:00:00+08:00");
+const START_MONDAY = new Date("2026-06-01T00:00:00+08:00");
 const WEEKLY_UPDATE_DAYS = ["每日", "每日", "每日"];
-const PREVIOUS_WEEK_DATES = ["2026-05-18", "2026-05-20", "2026-05-22"];
+const PREVIOUS_WEEK_DATES = ["2026-05-25", "2026-05-27", "2026-05-29"];
+const OLDER_MARKET_READOUT_DATES = ["2026-05-18", "2026-05-20", "2026-05-22"];
 
 const LIBRARIES = {
   william: {
@@ -15,8 +16,8 @@ const LIBRARIES = {
     scripts: [
       {
         week: 0,
-        date: "2026-05-25",
-        publishDate: "2026-05-25",
+        date: "2026-06-01",
+        publishDate: "2026-06-01",
         title: "ICT 策略专项：先扫流动性，再等结构确认",
         indicators: "ICT / Liquidity Sweep / Market Structure",
         assets: "BTC + ETH",
@@ -40,8 +41,8 @@ const LIBRARIES = {
       },
       {
         week: 1,
-        date: "2026-05-27",
-        publishDate: "2026-05-27",
+        date: "2026-06-03",
+        publishDate: "2026-06-03",
         title: "EMA 20 + RSI：趋势回踩怎么找 entry",
         indicators: "20 EMA / RSI",
         assets: "BTC + ETH",
@@ -63,8 +64,8 @@ const LIBRARIES = {
       },
       {
         week: 2,
-        date: "2026-05-29",
-        publishDate: "2026-05-29",
+        date: "2026-06-05",
+        publishDate: "2026-06-05",
         title: "布林带 + ATR：行情变窄时为什么不要 overtrade",
         indicators: "Bollinger Bands / ATR",
         assets: "BTC + ETH",
@@ -121,8 +122,8 @@ const LIBRARIES = {
     scripts: [
       {
         week: 0,
-        date: "2026-05-25",
-        publishDate: "2026-05-25",
+        date: "2026-06-01",
+        publishDate: "2026-06-01",
         title: "20 EMA + RSI：Clean Entry Confirmation",
         indicators: "20 EMA / RSI",
         assets: "BTC + Gold/SOL",
@@ -146,8 +147,8 @@ const LIBRARIES = {
       },
       {
         week: 1,
-        date: "2026-05-27",
-        publishDate: "2026-05-27",
+        date: "2026-06-03",
+        publishDate: "2026-06-03",
         title: "20 EMA + MACD：Trend Continuation or Fake Pullback",
         indicators: "20 EMA / MACD",
         assets: "BTC + Gold/SOL",
@@ -170,8 +171,8 @@ const LIBRARIES = {
       },
       {
         week: 2,
-        date: "2026-05-29",
-        publishDate: "2026-05-29",
+        date: "2026-06-05",
+        publishDate: "2026-06-05",
         title: "20 EMA + ATR：How Far Can This Move Go",
         indicators: "20 EMA / ATR",
         assets: "BTC + Gold/SOL",
@@ -230,8 +231,8 @@ const LIBRARIES = {
     scripts: [
       {
         week: 0,
-        date: "2026-05-25",
-        publishDate: "2026-05-25",
+        date: "2026-06-01",
+        publishDate: "2026-06-01",
         title: "Liquidity Sweep + VWAP：短线不要追突破，等扫完再确认",
         indicators: "Liquidity Sweep / VWAP",
         assets: "BTC + SOL",
@@ -255,8 +256,8 @@ const LIBRARIES = {
       },
       {
         week: 1,
-        date: "2026-05-27",
-        publishDate: "2026-05-27",
+        date: "2026-06-03",
+        publishDate: "2026-06-03",
         title: "Volume Spike + RSI：扫单后有没有真的进量",
         indicators: "成交量尖峰 / RSI",
         assets: "SOL + BTC",
@@ -278,8 +279,8 @@ const LIBRARIES = {
       },
       {
         week: 2,
-        date: "2026-05-29",
-        publishDate: "2026-05-29",
+        date: "2026-06-05",
+        publishDate: "2026-06-05",
         title: "Session High/Low + ATR：哪几个时间段更适合 scalp",
         indicators: "Session High/Low / ATR",
         assets: "BTC + SOL",
@@ -694,18 +695,21 @@ function getMarketUpdateConfig(lib) {
 function getMarketUpdates(lib) {
   const cfg = getMarketUpdateConfig(lib);
   return [
-    buildMarketUpdate(lib.name, cfg, "mon-market", "每日", "2026-05-25", "当日行情解读", "当天最新市场变化"),
-    buildMarketUpdate(lib.name, cfg, "wed-market", "每日", "2026-05-27", "当日行情跟进", "当天最新市场变化"),
-    buildMarketUpdate(lib.name, cfg, "fri-market", "每日", "2026-05-29", "当日行情复盘", "当天最新市场变化")
+    buildMarketUpdate(lib.name, cfg, "mon-market", "每日", "2026-06-01", "当日行情解读", "当天最新市场变化"),
+    buildMarketUpdate(lib.name, cfg, "wed-market", "每日", "2026-06-01", "当日行情跟进", "当天最新市场变化"),
+    buildMarketUpdate(lib.name, cfg, "fri-market", "每日", "2026-06-01", "当日行情复盘", "当天最新市场变化")
   ];
 }
 
 function getArchivedMarketUpdates(lib) {
   const cfg = getMarketUpdateConfig(lib);
   return [
-    buildMarketUpdate(lib.name, cfg, "mon-market", "周一", "2026-05-18", "近两天行情解读", "周末到周一的市场变化", ARCHIVED_MARKET_READOUT_OVERRIDES, true),
-    buildMarketUpdate(lib.name, cfg, "wed-market", "周三", "2026-05-20", "近两天行情跟进", "周一到周三的市场变化", ARCHIVED_MARKET_READOUT_OVERRIDES, true),
-    buildMarketUpdate(lib.name, cfg, "fri-market", "周五", "2026-05-22", "近一周行情复盘", "本周整体市场变化", ARCHIVED_MARKET_READOUT_OVERRIDES, true)
+    buildMarketUpdate(lib.name, cfg, "mon-market", "历史稿件", "2026-05-25", "当日行情解读", "当天最新市场变化", PREVIOUS_WEEK_MARKET_READOUT_OVERRIDES, true),
+    buildMarketUpdate(lib.name, cfg, "wed-market", "历史稿件", "2026-05-27", "当日行情跟进", "当天最新市场变化", PREVIOUS_WEEK_MARKET_READOUT_OVERRIDES, true),
+    buildMarketUpdate(lib.name, cfg, "fri-market", "历史稿件", "2026-05-29", "当日行情复盘", "当天最新市场变化", PREVIOUS_WEEK_MARKET_READOUT_OVERRIDES, true),
+    buildMarketUpdate(lib.name, cfg, "mon-market", "周一", OLDER_MARKET_READOUT_DATES[0], "近两天行情解读", "周末到周一的市场变化", ARCHIVED_MARKET_READOUT_OVERRIDES, true),
+    buildMarketUpdate(lib.name, cfg, "wed-market", "周三", OLDER_MARKET_READOUT_DATES[1], "近两天行情跟进", "周一到周三的市场变化", ARCHIVED_MARKET_READOUT_OVERRIDES, true),
+    buildMarketUpdate(lib.name, cfg, "fri-market", "周五", OLDER_MARKET_READOUT_DATES[2], "近一周行情复盘", "本周整体市场变化", ARCHIVED_MARKET_READOUT_OVERRIDES, true)
   ];
 }
 
@@ -740,7 +744,7 @@ function buildMarketUpdate(name, cfg, id, label, date, titleTail, windowText, ov
   };
 }
 
-const MARKET_READOUT_OVERRIDES = {
+const PREVIOUS_WEEK_MARKET_READOUT_OVERRIDES = {
   William: {
     "mon-market": {
       title: "ICT 行情解读：周一先读周末区间流动性",
