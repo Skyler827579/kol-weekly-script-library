@@ -695,15 +695,18 @@ function getMarketUpdateConfig(lib) {
 function getMarketUpdates(lib) {
   const cfg = getMarketUpdateConfig(lib);
   return [
-    buildMarketUpdate(lib.name, cfg, "mon-market", "每日", "2026-06-05", "当日行情解读", "当天最新市场变化"),
-    buildMarketUpdate(lib.name, cfg, "wed-market", "每日", "2026-06-05", "当日行情跟进", "当天最新市场变化"),
-    buildMarketUpdate(lib.name, cfg, "fri-market", "每日", "2026-06-05", "当日行情复盘", "当天最新市场变化")
+    buildMarketUpdate(lib.name, cfg, "mon-market", "每日", "2026-06-06", "当日行情解读", "当天最新市场变化"),
+    buildMarketUpdate(lib.name, cfg, "wed-market", "每日", "2026-06-06", "当日行情跟进", "当天最新市场变化"),
+    buildMarketUpdate(lib.name, cfg, "fri-market", "每日", "2026-06-06", "当日行情复盘", "当天最新市场变化")
   ];
 }
 
 function getArchivedMarketUpdates(lib) {
   const cfg = getMarketUpdateConfig(lib);
   return [
+    buildMarketUpdate(lib.name, cfg, "mon-market", "历史稿件", "2026-06-05", "当日行情解读", "当天最新市场变化", JUNE_5_MARKET_READOUT_OVERRIDES, true),
+    buildMarketUpdate(lib.name, cfg, "wed-market", "历史稿件", "2026-06-05", "当日行情跟进", "当天最新市场变化", JUNE_5_MARKET_READOUT_OVERRIDES, true),
+    buildMarketUpdate(lib.name, cfg, "fri-market", "历史稿件", "2026-06-05", "当日行情复盘", "当天最新市场变化", JUNE_5_MARKET_READOUT_OVERRIDES, true),
     buildMarketUpdate(lib.name, cfg, "mon-market", "历史稿件", "2026-06-04", "当日行情解读", "当天最新市场变化", JUNE_4_MARKET_READOUT_OVERRIDES, true),
     buildMarketUpdate(lib.name, cfg, "wed-market", "历史稿件", "2026-06-04", "当日行情跟进", "当天最新市场变化", JUNE_4_MARKET_READOUT_OVERRIDES, true),
     buildMarketUpdate(lib.name, cfg, "fri-market", "历史稿件", "2026-06-04", "当日行情复盘", "当天最新市场变化", JUNE_4_MARKET_READOUT_OVERRIDES, true),
@@ -972,7 +975,7 @@ const PREVIOUS_WEEK_MARKET_READOUT_OVERRIDES = {
   }
 };
 
-const MARKET_READOUT_OVERRIDES = {
+const JUNE_5_MARKET_READOUT_OVERRIDES = {
   William: {
     "mon-market": {
       title: "ICT 当日行情解读：6月5日先看急跌后是否形成接受",
