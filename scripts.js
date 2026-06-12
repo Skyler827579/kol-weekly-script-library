@@ -695,15 +695,18 @@ function getMarketUpdateConfig(lib) {
 function getMarketUpdates(lib) {
   const cfg = getMarketUpdateConfig(lib);
   return [
-    buildMarketUpdate(lib.name, cfg, "mon-market", "每日", "2026-06-11", "当日行情解读", "当天最新市场变化"),
-    buildMarketUpdate(lib.name, cfg, "wed-market", "每日", "2026-06-11", "当日行情跟进", "当天最新市场变化"),
-    buildMarketUpdate(lib.name, cfg, "fri-market", "每日", "2026-06-11", "当日行情复盘", "当天最新市场变化")
+    buildMarketUpdate(lib.name, cfg, "mon-market", "每日", "2026-06-12", "当日行情解读", "当天最新市场变化"),
+    buildMarketUpdate(lib.name, cfg, "wed-market", "每日", "2026-06-12", "当日行情跟进", "当天最新市场变化"),
+    buildMarketUpdate(lib.name, cfg, "fri-market", "每日", "2026-06-12", "当日行情复盘", "当天最新市场变化")
   ];
 }
 
 function getArchivedMarketUpdates(lib) {
   const cfg = getMarketUpdateConfig(lib);
   return [
+    buildMarketUpdate(lib.name, cfg, "mon-market", "历史稿件", "2026-06-11", "当日行情解读", "当天最新市场变化", JUNE_11_MARKET_READOUT_OVERRIDES, true),
+    buildMarketUpdate(lib.name, cfg, "wed-market", "历史稿件", "2026-06-11", "当日行情跟进", "当天最新市场变化", JUNE_11_MARKET_READOUT_OVERRIDES, true),
+    buildMarketUpdate(lib.name, cfg, "fri-market", "历史稿件", "2026-06-11", "当日行情复盘", "当天最新市场变化", JUNE_11_MARKET_READOUT_OVERRIDES, true),
     buildMarketUpdate(lib.name, cfg, "mon-market", "历史稿件", "2026-06-09", "当日行情解读", "当天最新市场变化", JUNE_9_MARKET_READOUT_OVERRIDES, true),
     buildMarketUpdate(lib.name, cfg, "wed-market", "历史稿件", "2026-06-09", "当日行情跟进", "当天最新市场变化", JUNE_9_MARKET_READOUT_OVERRIDES, true),
     buildMarketUpdate(lib.name, cfg, "fri-market", "历史稿件", "2026-06-09", "当日行情复盘", "当天最新市场变化", JUNE_9_MARKET_READOUT_OVERRIDES, true),
@@ -988,6 +991,222 @@ const PREVIOUS_WEEK_MARKET_READOUT_OVERRIDES = {
 };
 
 const MARKET_READOUT_OVERRIDES = {
+  William: {
+    "mon-market": {
+      title: "ICT 当日行情解读：6月12日先读周线收盘前的流动性选择",
+      summary: "William 用 ICT/SMC 解读 2026-06-12：BTC、ETH、SOL 进入周线收盘前的方向选择，Gold 用作风险与利率背景交叉检查，先看流动性再看结构。",
+      hook: "William 今天不要先猜周线收在哪里。刷新行情后，标出 6月11日高低点、本周高低点、亚洲盘边界和最近清算区，看哪一侧 liquidity 先被拿走。",
+      outline: [
+        "开场：把 6月12日定义成 weekly-close positioning day，先读流动性选择，不追第一段扩张。",
+        "关键位：标出 6月11日高低点、本周高低点、当日 session 边界和最近清算区。",
+        "结构：扫低后需要 displacement、CHOCH 和回踩守住；扫高后跌回区间按 buy-side liquidity grab 处理。",
+        "动能：刷新后比较 BTC、ETH、SOL 的 RSI、MACD、ATR，确认主流币是否同步。",
+        "风险：周末前波动与 headline risk 可能放大，Gold 只做宏观交叉检查，没有 invalidation 不留高杠杆仓位。"
+      ],
+      talk: [
+        "William 可以这样讲：on June 12, the weekly close is not a prediction. It is a liquidity and acceptance test.",
+        "BTC 与 ETH 若在前一日或周内低点扫单回收，并形成 bullish CHOCH，再讲 discount retest；SOL 不同步就降低确定性。",
+        "价格、RSI、MACD 和 ATR 全部由刷新行情写入口播，静态稿件只保留结构、关键位和风险流程。"
+      ],
+      contextLines: [
+        "The June 12 backdrop is a weekly-close positioning session after a volatile risk-sensitive stretch. Treat prior-day and weekly extremes as decision zones, not automatic entries.",
+        "Crypto breadth and gold's reaction to rates and risk headlines should be cross-checks. The trade still requires liquidity, structure confirmation, and a clear invalidation."
+      ],
+      marketTemplate: "刷新后如果 BTC/ETH 扫过 6月11日低点或本周 sell-side 后快速回收，并形成 displacement 与 CHOCH，主讲 FVG 或 order block 回踩；如果扫高失败、SOL 分化或 MACD 走弱，主讲周末前派发和等待。",
+      assignment: "让成员提交 BTC 或 ETH 6月12日最新 4H 图，标出 6月11日高低点、本周高低点、sweep、BOS/CHOCH、entry zone、SL 和第一目标。"
+    },
+    "wed-market": {
+      title: "ICT 当日行情跟进：6月12日检验 acceptance 能否守到周线收盘",
+      summary: "William 用 ICT/SMC 跟进 2026-06-12：检查前一日区间被扫后，BTC、ETH、SOL 是否形成能守到周线收盘的 acceptance 与结构。",
+      hook: "William 今天只回答一个问题：前一日 liquidity 被拿走以后，市场留下的是可执行的 structure，还是周末前的短暂回抽？",
+      outline: [
+        "开场：说明当日跟进重点是 acceptance quality，不用一根反弹或下跌 K 线代替结构。",
+        "流动性：观察 6月11日高低点与本周极值，确认 sweep 后价格被接受在哪一侧。",
+        "结构：higher low、displacement 和回踩守住才讲修复；跌回 broken structure 就讲弱反抽或派发。",
+        "动能：刷新后用 BTC、ETH、SOL 的 RSI、MACD、ATR 检查同步性与剩余空间。",
+        "风险：周线收盘和周末 headline risk 都会提高跳空风险，没有清楚止损就不扩大仓位。"
+      ],
+      talk: [
+        "William 可以这样讲：acceptance matters only when the structure shift survives the retest into the weekly close.",
+        "BTC 与 ETH 同步守住、SOL 参与，才讲 continuation；单币回抽或扫高回落，只算 readout，不算 full-size entry。",
+        "RSI、MACD 和 ATR 负责验证动能与空间，entry 仍来自 liquidity、structure 和 invalidation。"
+      ],
+      contextLines: [
+        "June 12 should separate durable acceptance from a temporary rebound or rejection before the weekly close.",
+        "Broad crypto participation matters. Gold remains a macro cross-check, while execution stays anchored to live chart structure."
+      ],
+      marketTemplate: "刷新后如果 BTC/ETH 在 6月11日区间边缘扫单回收、形成 higher low 且 SOL 同步，主讲 CHOCH 后回踩；如果扫高失败、ATR 收缩或跌回 broken structure，主讲周末前弱反抽和二次派发。",
+      assignment: "让成员提交 BTC 或 ETH 6月12日最新 4H 图，标出前一日区间、本周极值、sweep、displacement、BOS/CHOCH、retest、SL 和第一目标。"
+    },
+    "fri-market": {
+      title: "ICT 当日复盘转化：6月12日只保留周线收盘确认的结构",
+      summary: "William 用 2026-06-12 当日复盘筛选周线收盘前后的有效结构，只保留 liquidity、acceptance、structure shift、retest 和 invalidation 完整的计划。",
+      hook: "William 今天不复盘谁猜对周线方向，只复盘 6月12日有没有把 liquidity move 转成完整、可验证的 sequence。",
+      outline: [
+        "开场：复盘周线收盘前市场对前一日与本周关键区间的接受或拒绝。",
+        "流动性：回看 6月11日高低点、本周极值和当日 session 边界中最清楚的一次 sweep。",
+        "结构：把 acceptance、BOS/CHOCH、FVG 或 order block 回踩和 invalidation 画完整。",
+        "动能：刷新后用 BTC/ETH 的 RSI、MACD、ATR，并参考 SOL 是否同步验证结论。",
+        "风险：周末不为不完整 sequence 留高杠杆仓位；Gold 与宏观 headline 只用于调整风险。"
+      ],
+      talk: [
+        "William 可以这样讲：the lesson is whether the market earned acceptance into the weekly close.",
+        "只有 sweep、displacement、CHOCH 和 retest 都出现，才是 ICT setup；只有快速扩张或单币领先不是 entry。",
+        "ATR 扩张时缩小仓位，ATR 收缩时缩小目标，没有 invalidation 就记录 no trade。"
+      ],
+      contextLines: [
+        "Use this as the June 12 same-day review of whether the weekly close confirmed or rejected the market's liquidity move.",
+        "Reward confirmed structure and broad participation, not prediction, candle size, or weekend position bias."
+      ],
+      marketTemplate: "刷新后如果 BTC/ETH 已给出 sweep + acceptance + displacement + CHOCH + retest，主讲确认后的计划；如果扫高回落、SOL 不同步或动能衰减，主讲为什么周末前没有 entry。",
+      assignment: "让成员提交一张 6月12日复盘图，标出前一日区间、本周高低点、sweep、acceptance、BOS/CHOCH、回踩区、SL 和第一目标。"
+    }
+  },
+  KC: {
+    "mon-market": {
+      title: "20 EMA 当日行情解读：6月12日让周线收盘先通过 Blueprint",
+      summary: "KC 用 20 EMA Blueprint 解读 2026-06-12：BTC、ETH、SOL 与 Gold 都先检查均线位置、动能和 ATR，再决定周线收盘前是否有 clean setup。",
+      hook: "KC 今天不要先问 weekly close 会涨还是跌。刷新行情后先回答：is price above the 20 EMA, below it, or testing a reclaim near a key weekly level?",
+      outline: [
+        "开场：把 6月12日定义成 weekly-close Blueprint check，不追离均线太远的扩张。",
+        "位置：标出主图 20 EMA、6月11日高低点、本周高低点和当日第一次回踩。",
+        "确认：价格在 EMA 正确一侧并得到实时 RSI、MACD 配合，才算 clean hold 或 reclaim。",
+        "目标：用实时 ATR 约束 TP；BTC、ETH、SOL 若分化，主动缩小仓位和目标。",
+        "风险：Gold 与宏观 headline 用作风险交叉检查，周末前没有 Blueprint 确认就继续等。"
+      ],
+      talk: [
+        "KC 可以这样讲：before the weekly close, the Blueprint starts with location. No clean EMA hold or reclaim means no clean setup.",
+        "价格守住 20 EMA、RSI 守中线且 MACD 改善，才讲 first pullback；碰到 EMA 后再次被拒绝就等。",
+        "具体报价与指标由刷新后的页面提供，静态稿件只定义位置、确认、止损和目标流程。"
+      ],
+      contextLines: [
+        "The June 12 setup is a weekly-close location check across crypto and gold after a volatile risk-sensitive week.",
+        "Use live 20 EMA location, momentum, breadth, and ATR. Do not turn a Friday move or macro headline into an automatic direction call."
+      ],
+      marketTemplate: "刷新后如果主图守住或重新 reclaim 20 EMA，RSI/MACD 配合且第一次回踩稳定，主讲 weekly-close continuation；如果失去 EMA、跨币分化或 ATR 不支持目标，主讲 failed reclaim。",
+      assignment: "让成员提交 BTC、Gold 或 SOL 6月12日最新图，标出 20 EMA、6月11日高低点、本周极值、第一次回踩、entry、SL 和实时 ATR 目标。"
+    },
+    "wed-market": {
+      title: "20 EMA 当日行情跟进：6月12日守线才算周末前确认",
+      summary: "KC 用 20 EMA Blueprint 跟进 2026-06-12：第一次回踩是否守线、RSI/MACD 是否确认、ATR 是否支持目标，决定周末前能否参与。",
+      hook: "KC 今天的 quality check 很简单：did the EMA hold into the weekly close? 守不住均线，就没有 clean continuation setup。",
+      outline: [
+        "开场：把跟进定义成 first-pullback check，避免在周线收盘前追离均线太远的位置。",
+        "位置：检查主图是否贴近 20 EMA，以及回踩是否守在均线正确一侧。",
+        "确认：刷新后用 RSI 中线和 MACD 柱体判断是真修复、趋势延续还是被动回抽。",
+        "目标：用实时 ATR 制定第一目标；跨币分化或波动异常扩大时降低仓位。",
+        "风险：Gold 若与风险资产给出不同信号，只代表宏观环境复杂，不代表可以跳过 Blueprint。"
+      ],
+      talk: [
+        "KC 可以这样讲：weekly-close confirmation means the EMA hold survives the first pullback.",
+        "BTC 在 EMA 上方但 ETH 或 SOL 不确认，可以有 readout，但不一定有 full-size trade。",
+        "价格碰到 EMA 后立即被拒绝，this is resistance, not a late long entry."
+      ],
+      contextLines: [
+        "The June 12 follow-up should test whether the current move can hold through a first pullback into the weekly close.",
+        "Live 20 EMA location, cross-crypto participation, and ATR carry more weight than the size of the Friday candle."
+      ],
+      marketTemplate: "刷新后如果主图在 20 EMA 上方完成第一次回踩、RSI 守中线且 MACD 改善，主讲 continuation；如果跌回 EMA 下方、ATR 异常或跨币分化，主讲 fake reclaim 和等待。",
+      assignment: "让成员提交 BTC、Gold 或 SOL 6月12日最新图，标出 20 EMA、前一日与本周关键位、第一次回踩、entry zone、SL 和实时 ATR 第一目标。"
+    },
+    "fri-market": {
+      title: "20 EMA 当日复盘转化：6月12日让 ATR 过滤周线噪音",
+      summary: "KC 用 2026-06-12 当日复盘判断周线收盘是否符合 Blueprint：20 EMA 定位置，RSI/MACD 定质量，ATR 定现实目标。",
+      hook: "KC 今天复盘不要比较谁抓到 Friday move。Show me whether the EMA held, momentum confirmed, and ATR justified the target。",
+      outline: [
+        "开场：复盘周线收盘前后的 move 有没有尊重 20 EMA。",
+        "位置：标出主图、20 EMA、6月11日高低点、本周极值和第一次回踩的关系。",
+        "确认：刷新后用 RSI、MACD 判断延续、拒绝还是低动能震荡。",
+        "目标：用实时 ATR 检查 TP 是否现实，波动异常扩大时先缩小仓位。",
+        "转化：要求成员提交 entry、SL、TP，并写明周末前为何持有或不持有。"
+      ],
+      talk: [
+        "KC 可以这样讲：a weak weekly close fails when price cannot hold the EMA and momentum fades.",
+        "守住 EMA 后的第一次回踩，复盘 clean continuation；跌回 EMA 下方，复盘为什么没有 entry。",
+        "跨币分化、Gold 的风险信号和 ATR 变化都要求先执行纪律，再讨论方向。"
+      ],
+      contextLines: [
+        "Use this as a June 12 Blueprint recap of the weekly close across BTC, ETH, SOL, and gold.",
+        "Every conclusion should map to EMA location, momentum quality, ATR-based target, and a predefined weekend risk decision."
+      ],
+      marketTemplate: "刷新后如果主图在 20 EMA 上方且 RSI 守中线，主讲守线后的第一次回踩；如果价格低于 EMA、MACD 走弱、ATR 异常或跨币不确认，主讲短目标、离场或观望。",
+      assignment: "让成员提交一张 6月12日复盘图，标出 20 EMA、前一日与本周关键位、entry zone、SL、第一目标和实时 ATR 依据。"
+    }
+  },
+  Caven: {
+    "mon-market": {
+      title: "Scalp 当日行情解读：6月12日只做周线收盘前的边界反应",
+      summary: "Caven 用 liquidity、VWAP 和 ATR 解读 2026-06-12：BTC/SOL 只交易前一日、本周或 session 边界 sweep 后的 VWAP 回收与拒绝。",
+      hook: "Caven 今天不要在 Friday move 中间追。先刷新行情，把 SOL/BTC 的 6月11日 high/low、本周高低点、当日 session 边界和 VWAP 画出来。",
+      outline: [
+        "开场：说明 6月12日是 weekly-close scalp day，重点是边界反应，不是方向口号。",
+        "流动性：标出 SOL/BTC 前一日高低点、本周极值、当日 session high/low 和最近清算区。",
+        "VWAP：扫低并回收 VWAP 才讲 long scalp；扫高后跌回 VWAP 下方才讲 short scalp。",
+        "波动：刷新后读取 RSI、MACD、ATR，并用 BTC、ETH、SOL 是否同步检查参与度。",
+        "风险：周末前区间中间、低 ATR 或失控扩张环境都不追单，不留没有止损的高杠杆仓位。"
+      ],
+      talk: [
+        "Caven 可以这样讲：Friday volatility is not an entry. We trade the reaction at the prior-day, weekly, or session edge.",
+        "SOL 扫 session low、收回关键边界并站上 VWAP，而且 BTC 同步，才有 quick long scalp；扫高失去 VWAP 就讲 trap breakout。",
+        "静态稿件不写死价格，最近 key levels 都来自刷新后的图表与当日 session。"
+      ],
+      contextLines: [
+        "The June 12 scalp backdrop is a weekly-close session where prior-day, weekly, and session edges can attract liquidity.",
+        "Gold and macro headlines are risk context only. Crypto scalp triggers still come from liquidity, VWAP, participation, ATR, and fast invalidation."
+      ],
+      marketTemplate: "刷新后如果 SOL/BTC 扫低、收回前一日、本周或 session 边界并站上 VWAP，且实时 ATR 足够，主讲 quick long scalp；如果扫高失败、低于 VWAP 或卡在中间，主讲 short scalp 或等待。",
+      assignment: "让成员提交 SOL 或 BTC 6月12日 15M 图，标出 6月11日 high/low、本周极值、session 边界、一次 sweep、VWAP、entry、SL 和第一止盈。"
+    },
+    "wed-market": {
+      title: "Scalp 当日行情跟进：6月12日检查 weekly-close VWAP reaction",
+      summary: "Caven 用 liquidity、VWAP 和短线波动跟进 2026-06-12：只看关键边界被扫后的回收或拒绝，并用 ATR 判断周线收盘前是否还有 scalp 空间。",
+      hook: "Caven 今天跟进先问三个问题：边界 sweep 了吗，VWAP 守住了吗，ATR 还可控吗？少一个就等。",
+      outline: [
+        "开场：把跟进定义成 weekly-close reaction check，不追已经发生的第一段扩张。",
+        "流动性：确认 SOL/BTC 哪一侧前一日、本周或 session liquidity 已被扫，哪一侧仍是下一目标。",
+        "VWAP：扫低后回收并守住才讲 continuation；扫高后跌回下方就讲 trap breakout。",
+        "波动：刷新后用 RSI、MACD、ATR 检查动能、空间与跨币同步。",
+        "执行：区间中间、ATR 失控、VWAP 反复穿越都不是 clean scalp，周末前失败要快速退出。"
+      ],
+      talk: [
+        "Caven 可以这样讲：the reaction at the edge matters more than the size of the Friday candle.",
+        "SOL 扫低后站回 VWAP、RSI 修复且 BTC 同步，可以讲 quick long scalp。",
+        "价格回到 VWAP 又马上失守，shorten the target, close quickly, or skip the trade."
+      ],
+      contextLines: [
+        "The June 12 follow-up focuses on whether price can hold VWAP after liquidity is taken at a prior-day, weekly, or session edge.",
+        "Live ATR and cross-crypto participation decide whether the move has enough controlled range for a scalp before the weekly close."
+      ],
+      marketTemplate: "刷新后如果 SOL/BTC 在边界 sweep 后守住 VWAP、且 ATR 仍支持空间，主讲 weekly-close scalp；如果价格低于 VWAP、ATR 失控或 RSI 没修复，主讲 failed retest 和等待。",
+      assignment: "让成员提交 SOL 或 BTC 6月12日 15M 图，标出前一日、本周和 session 边界、sweep、VWAP 回收或拒绝、entry、SL 和第一止盈。"
+    },
+    "fri-market": {
+      title: "Scalp 当日复盘转化：6月12日只复盘 edge、sweep、VWAP",
+      summary: "Caven 用 2026-06-12 当日复盘把前一日与本周边界、session sweep、VWAP、RSI 和 ATR 转成短线作业，中间位置不点评。",
+      hook: "Caven 今天不复盘谁抓到周线方向，只复盘有没有 edge、sweep、VWAP reaction 和可控 ATR。",
+      outline: [
+        "开场：复盘周线收盘前最清楚的一次扫高或扫低，不用固定价格总结。",
+        "流动性：标出 SOL/BTC 前一日高低点、本周极值、当日 session 边界和被扫的一侧。",
+        "VWAP：确认 sweep 后是回收、拒绝，还是一直在中间震荡。",
+        "波动：刷新后用 RSI、MACD、ATR 判断这笔 scalp 是否有足够且可控的空间。",
+        "转化：止损必须放在 sweep 外侧，VWAP 失效就快速退出，周末前不把 scalp 变成长仓。"
+      ],
+      talk: [
+        "Caven 可以这样讲：the clean trade is the reaction after liquidity is taken and VWAP confirms.",
+        "SOL 或 BTC 扫 session low 后站回 VWAP，并且 RSI 修复，复盘 clean long scalp；扫高后跌回 VWAP 下方就复盘 trap breakout。",
+        "ATR 收缩时目标变小，ATR 失控时仓位变小，周末前不留没有明确止损的方向仓位。"
+      ],
+      contextLines: [
+        "Use this as the June 12 same-day scalp review into the weekly close.",
+        "Every recap should map to boundary, sweep, VWAP reaction, momentum, ATR space, and a clear weekend exit decision."
+      ],
+      marketTemplate: "刷新后如果 SOL/BTC 的 ATR 仍支持可控空间且 RSI 修复，主讲扫低回收 VWAP；如果 ATR 失控、价格低于 VWAP 或卡在 session 中间，主讲缩小仓位、扫高失败或等待。",
+      assignment: "让成员提交一张 6月12日 15M 复盘图，标出前一日与本周 high/low、session 边界、一次有效 sweep、VWAP、entry、SL 和第一止盈。"
+    }
+  }
+};
+
+const JUNE_11_MARKET_READOUT_OVERRIDES = {
   William: {
     "mon-market": {
       title: "ICT 当日行情解读：6月11日先处理 risk-off 后的区间接受度",
